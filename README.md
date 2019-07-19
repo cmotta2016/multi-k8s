@@ -56,6 +56,10 @@ $ helm init --service-account tiller --upgrade
 ```
 $ helm install stable/nginx-ingress --name my-nginx --set rbac.create=true
 ```
+Para ver o ip external gerado
+```
+$ kubectl --namespace default get services -o wide -w my-nginx-nginx-ingress-controller
+```
 
 13. Fazendo o deploy
 ```
