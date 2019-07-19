@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: 2019-07-19T21:13:50Z
+  labels:
+    app: nginx-ingress
+    chart: nginx-ingress-1.10.0
+    component: controller
+    heritage: Tiller
+    release: my-nginx
+  name: my-nginx-nginx-ingress-controller
+  namespace: default
+  resourceVersion: "1390"
+  selfLink: /api/v1/namespaces/default/services/my-nginx-nginx-ingress-controller
+  uid: 1a90a5a5-aa6a-11e9-8636-42010aa80026
+spec:
+  clusterIP: 10.0.3.119
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    nodePort: 32115
+    port: 80
+    protocol: TCP
+    targetPort: http
+  - name: https
+    nodePort: 30237
+    port: 443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app: nginx-ingress
+    component: controller
+    release: my-nginx
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 34.94.38.9
