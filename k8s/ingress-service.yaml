@@ -7,7 +7,8 @@ metadata:
   nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
  rules:
-  - http:
+  - host: fibcalc.apps.openshift.linux4sysadmin.com.br
+    http:
      paths:
       - path: /(.*)
         backend:
