@@ -2,4 +2,4 @@ stages:
 - name: Deploy
   steps:
   - applyYamlConfig:
-      path: ./k8s
+      path: ./k8s/*
