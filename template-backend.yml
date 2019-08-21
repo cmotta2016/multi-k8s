@@ -59,7 +59,7 @@ objects:
     - port: 5000
       targetPort: 5000
     selector:
-      app: "${NAME}"
+      app: "${LABEL}"
       deploymentconfig: "${NAME}"
 - apiVersion: apps/v1
   kind: Deployment
@@ -82,7 +82,7 @@ objects:
     - type: ConfigChange
   replicas: 1
   selector:
-     app: "${NAME}"
+     app: "${LABEL}"
      deploymentconfig: "${NAME}"
   template:
     metadata:
