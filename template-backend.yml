@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: fibcalc
+metadata:
+  name: fibcalc
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: "${LABEL}"
+    annotations:
+      description: Keeps track of changes in the application image
+    name: "${NAME}"
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    labels: 
+      app: "${LABEL}"
+    name: "${NAME}"
+  spec:
+    source:
+      type: Git
+      git:
+        ref: backend
+        uri: 'https://github.com/cmotta2016/multi-k8s.git'
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: 'nodejs:8'
+          namespace: openshift
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "${NAME}:latest"
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+    - type: GitHub
+      github:
+        secret: secret101
+    - type: Generic
+      generic:
+        secret: secret101
+    postCommit:
+      script: npm test -- --coverage
+    runPolicy: Serial
+- apiVersion: v1
+  kind: Service
+  metadata:
+   labels: 
+     app: "${LABEL}"
+   name: "${NAME}"
+  spec:
+   ports:
+   - port: 5000
+     targetPort: 5000
+   selector:
+      app: "${NAME}"
+      deploymentconfig: "${NAME}"
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+   labels: 
+     app: "${LABEL}"
+   name: "${NAME}"
+  spec:
+    strategy:
+      type: "Rolling"
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - "${NAME}"
+        from: 
+          kind: ImageStreamTag
+          name: "${NAME}:latest"
+    - type: ConfigChange
+   replicas: 1
+   selector:
+     app: "${NAME}"
+     deploymentconfig: "${NAME}"
+   template:
+    metadata:
+     labels:
+      app: "${LABEL}"
+      deploymentconfig: "${NAME}"
+    spec:
+     containers: 
+      - name: "${NAME}"
+        image: " "
+        ports:
+         - containerPort: 5000
+           protocol: TCP
+        env:
+         - name: REDIS_HOST
+           value: redis-cluster-ip-service
+         - name: REDIS_PORT
+           value: '6379'
+         - name: PGHOST
+           value: postgres-cluster-ip-service
+         - name: PGPORT
+           value: '5432'
+         - name: PGUSER
+           value: postgres
+         - name: PGDATABASE
+           value: postgres
+         - name: PGPASSWORD
+           valueFrom:
+            secretKeyRef:
+             name: pgpassword
+             key: PGPASSWORD
+parameters:
+- name: NAME
+  description: The name assigned to all of the frontend objects defined in this template.
+  displayName: Name
+  required: true
+  value: fibcalc
+- name: LABEL
+  displayName: App label
+  required: true
+  value: fibcalc
