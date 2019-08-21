@@ -61,7 +61,7 @@ objects:
     selector:
       app: "${LABEL}"
       deploymentconfig: "${NAME}"
-- apiVersion: apps/v1
+- apiVersion: apps.openshift.io/v1
   kind: Deployment
   metadata:
     labels: 
