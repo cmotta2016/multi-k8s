@@ -51,22 +51,22 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-   labels: 
-     app: "${LABEL}"
-   name: "${NAME}"
+    labels: 
+      app: "${LABEL}"
+    name: "${NAME}"
   spec:
-   ports:
-   - port: 5000
-     targetPort: 5000
-   selector:
+    ports:
+    - port: 5000
+      targetPort: 5000
+    selector:
       app: "${NAME}"
       deploymentconfig: "${NAME}"
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-   labels: 
-     app: "${LABEL}"
-   name: "${NAME}"
+    labels: 
+      app: "${LABEL}"
+    name: "${NAME}"
   spec:
     strategy:
       type: "Rolling"
@@ -80,11 +80,11 @@ objects:
           kind: ImageStreamTag
           name: "${NAME}:latest"
     - type: ConfigChange
-   replicas: 1
-   selector:
+  replicas: 1
+  selector:
      app: "${NAME}"
      deploymentconfig: "${NAME}"
-   template:
+  template:
     metadata:
      labels:
       app: "${LABEL}"
